@@ -45,8 +45,8 @@ func _physics_process(delta):
 	### apply movement
 	move *= speed;
 	velocity += move;
-	velocity -= up * gravity * delta;
-	move_and_collide(velocity);
+	### velocity -= up * gravity * delta;
+	velocity = move_and_slide(velocity, up);
 	velocity *= ground_drag;
 	
 	### delta_pitch and delta_yaw hold the relative change
@@ -79,7 +79,7 @@ func _physics_process(delta):
 	### pitch is instead only applied to the camera
 	$camera.global_rotate(right.normalized(), rel_pitch);
 	### both the camera and player should yaw
-	transform = transform.rotated(up.normalized(), rel_yaw);
+	rotate(up.normalized(), rel_yaw);
 
 ### unfortunately no builtin radians function
 func radians(n: float):
