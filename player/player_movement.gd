@@ -8,8 +8,6 @@ export var pitch: float = 0.0;
 export var yaw: float = 0.0;
 export var old_pitch: float = 0.0;
 export var old_yaw: float = 0.0;
-export var rel_pitch: float = 0.0;
-export var rel_yaw: float = 0.0;
 export var pitch_speed: float = 1.0;
 export var yaw_speed: float = 1.0;
 
@@ -34,7 +32,35 @@ func _input(event):
 		yaw -= event.relative.x * yaw_speed;
 
 func _physics_process(delta):
-	var basis = get_transform().basis;
+	### clamp pitch to straight up and straight down
+	pitch = clamp(pitch, -90, 90);
+	### modulo yaw so it does inc/dec into inf/-inf
+	yaw = fmod(yaw, 360.0);
+	
+	### calculate relative rotation
+	var rel_pitch = deg2rad(pitch - old_pitch);
+	var rel_yaw = deg2rad(yaw - old_yaw);
+
+	### save pitch
+	old_pitch = pitch;
+	old_yaw = yaw;
+	
+	### the player itself should not pitch
+	### pitch is instead only applied to the camera
+	var a: Quat = Quat($camera.global_transform.basis);
+	var b: Quat = Quat($camera.global_transform.rotated(right.normalized(), rel_pitch).basis);
+	var c: Quat = a.slerp(b, 0.5);
+	$camera.global_transform.basis = Basis(c);
+
+	### yaw player and camera
+	rotate(up.normalized(), rel_yaw);
+
+	velocity += gravity * delta;
+	var velocity_vertical: float = velocity.y;
+	var velocity_horizontal: Vector3 = Vector3(velocity.x, 0.0, velocity.y);
+	var horizontal_move: Vector3 = Vector3.ZERO;
+
+	var basis: Basis = transform.basis;
 	### forward vector
 	forward = basis.x;
 	### right vector
@@ -42,19 +68,17 @@ func _physics_process(delta):
 	### up vector
 	up = basis.y;
 
-	### velocity += gravity * delta;
-	var velocity_vertical = velocity.y;
-	var velocity_horizontal = Vector3(velocity.x, 0.0, velocity.y);
-	var horizontal_move = Vector3.ZERO;
+	print("[+] yaw:     " + str(yaw));
+	print("[+] forward: " + str(forward));
 	
 	### check for inputs
-	if   Input.is_action_pressed("forward"):
+	if Input.is_action_pressed("forward"):
 		horizontal_move += forward;
-	elif Input.is_action_pressed("backward"):
+	if Input.is_action_pressed("backward"):
 		horizontal_move -= forward;
-	elif Input.is_action_pressed("right"):
+	if Input.is_action_pressed("right"):
 		horizontal_move += right;
-	elif Input.is_action_pressed("left"):
+	if Input.is_action_pressed("left"):
 		horizontal_move -= right;
 	
 	### apply movement speed before jumping
@@ -68,33 +92,4 @@ func _physics_process(delta):
 	velocity_vertical *= air_drag;
 
 	velocity = velocity_horizontal + up * velocity_vertical;
-	velocity = move_and_slide(velocity);
-	
-	### clamp pitch to straight up and straight down
-	pitch = clamp(pitch, -90, 90);
-	### modulo yaw so it does inc/dec into inf/-inf
-	yaw = fmod(yaw, 360.0);
-	
-	### calculate relative rotation
-	rel_pitch = radians(pitch - old_pitch);
-	rel_yaw = radians(yaw - old_yaw);
-
-	### save pitch
-	old_pitch = pitch;
-	old_yaw = yaw;
-	
-	### the player itself should not pitch
-	### pitch is instead only applied to the camera
-	var a: Quat = Quat($camera.global_transform.basis);
-	var b: Quat = Quat($camera.global_transform.rotated(right.normalized(), rel_pitch).basis);
-	var c: Quat = a.slerp(b, 0.5);
-	$camera.global_transform.basis = Basis(c);
-
-	a = Quat(transform.basis);
-	b = Quat(transform.rotated(up.normalized(), rel_yaw).basis);
-	c = a.slerp(b, 0.5);
-	transform.basis = Basis(c);
-
-### unfortunately no builtin radians function
-func radians(n: float):
-	return n * 3.1415 / 180.0;
+	velocity = move_and_slide(velocity, -gravity.normalized());
