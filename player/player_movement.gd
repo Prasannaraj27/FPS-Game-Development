@@ -1,6 +1,6 @@
 extends RigidBody
 
-# export all the variables for debugging
+### export all the variables for debugging
 export var velocity: Vector3 = Vector3.ZERO;
 export var speed: float = 10.0;
 export var pitch: float = 0.0;
@@ -11,6 +11,7 @@ export var rel_pitch: float = 0.0;
 export var yaw_speed: float = 1.0;
 export var gravity: float = 9.8;
 export var ground_drag: float = 0.5;
+### apparently the z axis is supposed to be forward, not the x axis
 export var forward: Vector3 = Vector3(1, 0, 0);
 export var right: Vector3 = Vector3(0, 0, 1);
 export var up: Vector3 = Vector3(0, 1, 0);
