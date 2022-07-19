@@ -6,44 +6,77 @@ export var speed: float = 10.0;
 
 export var pitch: float = 0.0;
 export var yaw: float = 0.0;
-export var old_pitch: float = 0.0;
-export var old_yaw: float = 0.0;
+export var delta_pitch: float = 0.0;
+export var delta_yaw: float = 0.0;
 export var pitch_speed: float = 1.0;
 export var yaw_speed: float = 1.0;
 
 export onready var gravity: Vector3 = ProjectSettings.get_setting("physics/3d/default_gravity_vector") * ProjectSettings.get_setting("physics/3d/default_gravity");
 export var floor_drag: float = 0.6;
 export var air_drag: float = 0.9;
-export var jump_force: float = 5.0;
+export var jump_force: float = 10.0;
 
-### apparently the z axis is supposed to be forward, not the x axis
-export var forward: Vector3 = Vector3(1, 0, 0);
-export var right: Vector3 = Vector3(0, 0, 1);
-export var up: Vector3 = Vector3(0, 1, 0);
+export var forward: Vector3 = Vector3();
+export var right: Vector3 = Vector3();
+export var up: Vector3 = Vector3();
 
 func _ready():
 	### set camera to follow player
 	$camera.target = self;
 
+	### random basis behavior tests
+	### Basis * vector rotates vector by the basis
+	### print((Basis(Vector3.UP, deg2rad(90.0)) * Vector3.FORWARD));
+
 ### only way to capture mouse events
 func _input(event):
 	if event is InputEventMouseMotion:
-		pitch -= event.relative.y * pitch_speed;
-		yaw -= event.relative.x * yaw_speed;
+		delta_pitch -= event.relative.y * pitch_speed;
+		delta_yaw -= event.relative.x * yaw_speed;
 
 func _physics_process(delta):
+	var basis = transform.basis;
+	forward = -basis.z;
+	right = basis.x;
+	up = basis.y;
+
+	var on_ground: bool = is_on_floor();
+
+	velocity += gravity * delta;
+	var vertical_velocity: float = velocity.y;
+	var horizontal_velocity: Vector3 = Vector3(velocity.x, 0.0, velocity.z);
+	### -x, +x, -z, +z
+	var input: Vector2 = Input.get_vector("left", "right", "forward", "backward");
+	var horizontal_input: Vector3 = Vector3(input.x, 0.0, input.y);
+	var horizontal_move: Vector3 = basis * horizontal_input;
+	
+	### apply movement speed
+	horizontal_velocity = (horizontal_velocity + horizontal_move * speed) * floor_drag;
+
+	### check for jumping
+	if Input.is_action_pressed("jump") and on_ground:
+		vertical_velocity += jump_force;
+
+	if not on_ground and vertical_velocity > 0.0:
+		vertical_velocity *= air_drag;
+
+	velocity = horizontal_velocity + up * vertical_velocity;
+	velocity = move_and_slide(velocity, up.normalized());
+
+	var old_pitch = pitch;
+	var old_yaw = yaw;
+
 	### clamp pitch to straight up and straight down
-	pitch = clamp(pitch, -90, 90);
+	pitch = clamp(pitch + delta_pitch, -90, 90);
 	### modulo yaw so it does inc/dec into inf/-inf
-	yaw = fmod(yaw, 360.0);
+	yaw = fmod(yaw + delta_yaw, 360.0);
 	
 	### calculate relative rotation
 	var rel_pitch = deg2rad(pitch - old_pitch);
 	var rel_yaw = deg2rad(yaw - old_yaw);
 
-	### save pitch
-	old_pitch = pitch;
-	old_yaw = yaw;
+	delta_pitch = 0.0;
+	delta_yaw = 0.0;
 	
 	### the player itself should not pitch
 	### pitch is instead only applied to the camera
@@ -53,43 +86,4 @@ func _physics_process(delta):
 	$camera.global_transform.basis = Basis(c);
 
 	### yaw player and camera
-	rotate(up.normalized(), rel_yaw);
-
-	velocity += gravity * delta;
-	var velocity_vertical: float = velocity.y;
-	var velocity_horizontal: Vector3 = Vector3(velocity.x, 0.0, velocity.y);
-	var horizontal_move: Vector3 = Vector3.ZERO;
-
-	var basis: Basis = transform.basis;
-	### forward vector
-	forward = basis.x;
-	### right vector
-	right = basis.z
-	### up vector
-	up = basis.y;
-
-	print("[+] yaw:     " + str(yaw));
-	print("[+] forward: " + str(forward));
-	
-	### check for inputs
-	if Input.is_action_pressed("forward"):
-		horizontal_move += forward;
-	if Input.is_action_pressed("backward"):
-		horizontal_move -= forward;
-	if Input.is_action_pressed("right"):
-		horizontal_move += right;
-	if Input.is_action_pressed("left"):
-		horizontal_move -= right;
-	
-	### apply movement speed before jumping
-	horizontal_move *= speed;
-	velocity_horizontal = (velocity_horizontal + horizontal_move) * floor_drag;
-
-	### check for jumping
-	if Input.is_action_pressed("jump"):
-		velocity_vertical += jump_force;
-
-	velocity_vertical *= air_drag;
-
-	velocity = velocity_horizontal + up * velocity_vertical;
-	velocity = move_and_slide(velocity, -gravity.normalized());
+	global_rotate(up.normalized(), rel_yaw);
