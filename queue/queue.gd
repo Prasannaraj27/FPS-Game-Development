@@ -51,7 +51,7 @@ func pop_front():
 func len():
 	return length;
 	
-func empty():
+func clear():
 	head = null;
 	tail = null;
 	length = 0;
@@ -64,6 +64,6 @@ func consume():
 		entries.append(h.inner);
 		h = h.bk;
 		
-	empty();
+	clear();
 		
 	return entries;
