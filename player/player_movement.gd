@@ -35,7 +35,7 @@ func _physics_process(delta):
 	### right vector
 	right = basis.z
 	### up vector
-	up = Vector3.UP;
+	up = basis.y;
 	
 	### check for inputs
 	if   Input.is_action_pressed("forward"):
@@ -61,7 +61,6 @@ func _physics_process(delta):
 	### save the old rotation values to calculate
 	### relative rotation later
 	var old_pitch = pitch;
-	var old_yaw = yaw;
 	
 	### sum up change since last tick
 	for event in mouse_events:
@@ -78,15 +77,14 @@ func _physics_process(delta):
 	
 	### calculate relative rotation
 	rel_pitch = radians(pitch - old_pitch);
-	rel_yaw = radians(yaw - old_yaw);
 	
 	### the player itself should not pitch
 	### pitch is instead only applied to the camera
 	$camera.global_rotate(right.normalized(), rel_pitch);
-	### both the camera and player should yaw
 
 func _integrate_forces(state):
-	state.transform = state.transform.rotated(up.normalized(), rel_yaw);
+	### both the camera and player should yaw
+	rotate_object_local(up.normalized(), radians(yaw));
 
 ### unfortunately no builtin radians function
 func radians(n: float):
