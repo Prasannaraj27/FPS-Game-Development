@@ -8,6 +8,7 @@ export var yaw: float = 0.0;
 export var pitch_speed: float = 1.0;
 export var yaw_speed: float = 1.0;
 export var gravity: float = 9.8;
+export var ground_drag: float = 0.5;
 
 ### array to hold mouse events
 var mouse_events: Array = [];
@@ -44,7 +45,9 @@ func _physics_process(delta):
 	### apply movement
 	move *= speed;
 	velocity += move;
-	velocity = move_and_slide(move, Vector3.UP);
+	velocity -= up * gravity * delta;
+	move_and_collide(velocity);
+	velocity *= ground_drag;
 	
 	### delta_pitch and delta_yaw hold the relative change
 	### of the mouse position since the last tick

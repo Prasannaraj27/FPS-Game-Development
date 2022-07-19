@@ -7,4 +7,4 @@ var target: Spatial = null;
 func _physics_process(delta):
 	### set local transform to zero which
 	### snaps the camera to the parent node
-	self.transform.origin = Vector3.ZERO;
+	self.global_transform.origin = target.global_transform.origin;
