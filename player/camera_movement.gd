@@ -1,8 +1,8 @@
 extends Camera
 
-### Spatial is the parent class of all node types
+### Node is the parent class of all node types
 ### so using it here allows target to be any node type
-var target: Spatial = null;
+var target: Node = null;
 
 func _physics_process(delta):
 	### set local transform to zero which
