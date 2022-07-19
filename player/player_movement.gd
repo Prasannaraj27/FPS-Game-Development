@@ -1,14 +1,19 @@
-extends KinematicBody
+extends RigidBody
 
 # export all the variables for debugging
 export var velocity: Vector3 = Vector3.ZERO;
-export var speed: float = 5.0;
+export var speed: float = 10.0;
 export var pitch: float = 0.0;
 export var yaw: float = 0.0;
 export var pitch_speed: float = 1.0;
+export var rel_yaw: float = 0.0;
+export var rel_pitch: float = 0.0;
 export var yaw_speed: float = 1.0;
 export var gravity: float = 9.8;
 export var ground_drag: float = 0.5;
+export var forward: Vector3 = Vector3(1, 0, 0);
+export var right: Vector3 = Vector3(0, 0, 1);
+export var up: Vector3 = Vector3(0, 1, 0);
 
 ### array to hold mouse events
 var mouse_events: Array = [];
@@ -26,11 +31,11 @@ func _physics_process(delta):
 	var move: Vector3 = Vector3.ZERO;
 	var basis = get_transform().basis;
 	### forward vector
-	var forward = basis.x;
+	forward = basis.x;
 	### right vector
-	var right = basis.z
+	right = basis.z
 	### up vector
-	var up = Vector3.UP;
+	up = Vector3.UP;
 	
 	### check for inputs
 	if   Input.is_action_pressed("forward"):
@@ -45,8 +50,8 @@ func _physics_process(delta):
 	### apply movement
 	move *= speed;
 	velocity += move;
-	### velocity -= up * gravity * delta;
-	velocity = move_and_slide(velocity, up);
+	velocity -= up * gravity;
+	add_central_force(velocity);
 	velocity *= ground_drag;
 	
 	### delta_pitch and delta_yaw hold the relative change
@@ -72,14 +77,16 @@ func _physics_process(delta):
 	yaw = fmod(yaw + delta_yaw * pitch_speed, 360.0);
 	
 	### calculate relative rotation
-	var rel_pitch = radians(pitch - old_pitch);
-	var rel_yaw = radians(yaw - old_yaw);
+	rel_pitch = radians(pitch - old_pitch);
+	rel_yaw = radians(yaw - old_yaw);
 	
 	### the player itself should not pitch
 	### pitch is instead only applied to the camera
 	$camera.global_rotate(right.normalized(), rel_pitch);
 	### both the camera and player should yaw
-	rotate(up.normalized(), rel_yaw);
+
+func _integrate_forces(state):
+	state.transform = state.transform.rotated(up.normalized(), rel_yaw);
 
 ### unfortunately no builtin radians function
 func radians(n: float):
