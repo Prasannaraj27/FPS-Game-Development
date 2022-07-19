@@ -19,7 +19,7 @@ func _ready():
 ### only way to capture mouse events
 func _input(event):
 	if event is InputEventMouseMotion:
-		mouse_events.append(event)
+		mouse_events.append(event);
 
 func _physics_process(delta):
 	### amount of movement this tick
@@ -68,7 +68,7 @@ func _physics_process(delta):
 	
 	### clamp pitch to straight up and straight down
 	pitch = clamp(pitch + delta_pitch * pitch_speed, -90, 90);
-	### modulo yaw so it does increment into inf or -inf
+	### modulo yaw so it does inc/dec into inf/-inf
 	yaw = fmod(yaw + delta_yaw * pitch_speed, 360.0);
 	
 	### calculate relative rotation

@@ -7,63 +7,63 @@ var length = 0;
 func push_back(v):
 	var e = QueueEntry.new(v);
 	
-	if self.tail != null:
-		self.tail.bk = e;
-		e.fd = self.tail;
+	if tail != null:
+		tail.bk = e;
+		e.fd = tail;
 	else:
-		if self.head != null:
-			self.head.bk = e;
+		if head != null:
+			head.bk = e;
 		else:
-			self.head = e;
+			head = e;
 	
 	length += 1;
-	self.tail = e;
+	tail = e;
 
 func pop_back():
-	var e = self.tail;
-	if self.tail != null:
-		self.tail = self.tail.fd;
+	var e = tail;
+	if tail != null:
+		tail = tail.fd;
 		
 	return e.inner;
 	
 func push_front(v):
 	var e = QueueEntry.new(v);
 
-	if self.head != null:
-		self.head.fd = e;
-		e.bk = self.head;
+	if head != null:
+		head.fd = e;
+		e.bk = head;
 	else:
-		if self.tail != null:
-			self.tail.fd = e;
+		if tail != null:
+			tail.fd = e;
 		else:
-			self.tail = e;
+			tail = e;
 
 	length += 1;
-	self.head = e;
+	head = e;
 
 func pop_front():
-	var e = self.head;
-	if self.head != null:
-		self.head = self.head.bk;
+	var e = head;
+	if head != null:
+		head = head.bk;
 		
 	return e.inner;
 
 func len():
-	return self.length;
+	return length;
 	
 func empty():
-	self.head = null;
-	self.tail = null;
-	self.length = 0;
+	head = null;
+	tail = null;
+	length = 0;
 
 func consume():
 	var entries: Array = [];
-	var h = self.head;
+	var h = head;
 	
 	while h != null:
 		entries.append(h.inner);
 		h = h.bk;
 		
-	self.empty();
+	empty();
 		
 	return entries;

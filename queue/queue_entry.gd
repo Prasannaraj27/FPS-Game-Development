@@ -5,4 +5,4 @@ var fd = null;
 var bk = null;
 
 func _init(v):
-	self.inner = v;
+	inner = v;
