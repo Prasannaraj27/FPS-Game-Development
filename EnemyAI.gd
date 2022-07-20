@@ -1,9 +1,5 @@
 extends RigidBody
 
-
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
 var navAgent : NavigationAgent;
 export(NodePath) var targetNode;
 
@@ -22,10 +18,6 @@ func _physics_process(delta):
 	var invFloorNormal = Vector3(1, 1, 1) - absNormal;
 	velocity = ((target - currentPos) * invFloorNormal).normalized() * 10;
 	navAgent.set_velocity(velocity);
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
 
 
 func _on_NavigationAgent_velocity_computed(safe_velocity):
