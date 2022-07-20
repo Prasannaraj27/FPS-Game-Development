@@ -8,13 +8,13 @@ export var pitch: float = 0.0;
 export var yaw: float = 0.0;
 export var delta_pitch: float = 0.0;
 export var delta_yaw: float = 0.0;
-export var pitch_speed: float = 1.0;
-export var yaw_speed: float = 1.0;
+export var pitch_speed: float = 0.2;
+export var yaw_speed: float = 0.2;
 
 export onready var gravity: Vector3 = ProjectSettings.get_setting("physics/3d/default_gravity_vector") * ProjectSettings.get_setting("physics/3d/default_gravity");
 export var floor_drag: float = 0.6;
 export var air_drag: float = 0.9;
-export var jump_force: float = 10.0;
+export var jump_force: float = 20.0;
 
 export var forward: Vector3 = Vector3();
 export var right: Vector3 = Vector3();
