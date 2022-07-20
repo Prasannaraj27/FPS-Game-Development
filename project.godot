@@ -10,6 +10,16 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Reference",
+"class": "Inventory",
+"language": "GDScript",
+"path": "res://inventory/inventory.gd"
+}, {
+"base": "Reference",
+"class": "Item",
+"language": "GDScript",
+"path": "res://inventory/item.gd"
+}, {
+"base": "Reference",
 "class": "Queue",
 "language": "GDScript",
 "path": "res://queue/queue.gd"
@@ -20,6 +30,8 @@ _global_script_classes=[ {
 "path": "res://queue/queue_entry.gd"
 } ]
 _global_script_class_icons={
+"Inventory": "",
+"Item": "",
 "Queue": "",
 "QueueEntry": ""
 }
