@@ -23,8 +23,9 @@ export var up: Vector3 = Vector3();
 const Item = preload("res://inventory/item.gd");
 
 onready var camera = $camera;
-onready var handler: Node = get_tree().get_root().get_node("main/handler");
+onready var handler: Node = get_tree().root.get_node("main/handler");
 onready var inventory = $inventory;
+onready var main = get_tree().root.get_node("main");
 
 func test(object):
 	if object is ItemObject:
@@ -60,10 +61,11 @@ func _process(delta):
 	if Input.is_mouse_button_pressed(1):
 		var bulletInstance = preload("res://BulletTest.tscn");
 		var newBullet = bulletInstance.instance();
-		add_child(newBullet);
 		print(camera.project_ray_origin(get_viewport().size / 2));
 		print(camera.project_ray_normal(get_viewport().size / 2));
+		newBullet.global_transform.origin = self.global_transform.origin;
 		newBullet.get_node("RayCast").direction = -camera.global_transform.basis.z;
+		self.main.add_child(newBullet);
 
 func _physics_process(delta):
 	var basis = transform.basis;
