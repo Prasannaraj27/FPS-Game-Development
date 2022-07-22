@@ -1,5 +1,5 @@
 extends RigidBody
-class_name Interactable, "res://icon.png"
+class_name Interactable, "res://assets/icon.png"
 
 signal destructor(node);
 

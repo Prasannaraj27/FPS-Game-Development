@@ -21,6 +21,7 @@ export var right: Vector3 = Vector3();
 export var up: Vector3 = Vector3();
 
 const Item = preload("res://inventory/item.gd");
+const Bullet = preload("res://prefabs/BulletTest.tscn");
 
 onready var camera = $camera;
 onready var handler: Node = get_tree().root.get_node("main/handler");
@@ -54,8 +55,7 @@ func _process(delta) -> void:
 		inventory.visible = not inventory.visible;
 
 	if Input.is_mouse_button_pressed(1):
-		var bulletInstance = preload("res://BulletTest.tscn");
-		var newBullet = bulletInstance.instance();
+		var newBullet = Bullet.instance();
 		print(camera.project_ray_origin(get_viewport().size / 2));
 		print(camera.project_ray_normal(get_viewport().size / 2));
 		newBullet.global_transform.origin = global_transform.origin;
