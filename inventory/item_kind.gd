@@ -1,6 +1,9 @@
-enum ItemKind {
+extends Object
+
+enum {
 	Wood,
 	Metal,
 	Useless,
-    Ammo,
+	Ammo,
+	Unknown,
 }

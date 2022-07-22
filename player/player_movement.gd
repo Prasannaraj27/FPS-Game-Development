@@ -20,9 +20,26 @@ export var forward: Vector3 = Vector3();
 export var right: Vector3 = Vector3();
 export var up: Vector3 = Vector3();
 
+onready var camera: Camera = $camera;
+onready var pickup_ray: RayCast = $pickup_ray;
+onready var handler: Node = get_tree().get_root().get_node("main/handler");
+onready var inventory: Inventory = Inventory.new();
+
+func test(object):
+	if object is ItemObject:
+		self.inventory.add_items(object.item_kind, object.item_amount);
+		object.queue_free();
+		
 func _ready():
 	### set camera to follow player
-	$camera.target = self;
+	self.camera.target = self;
+	
+	### register interaction signal
+	self.handler.connect("interaction", self, "test")
+	
+	### debugging
+	### pickup_ray.debug_shape_custom_color = Color.red;
+	### pickup_ray.debug_shape_thickness = 1;
 
 	### random basis behavior tests
 	### Basis * vector rotates vector by the basis
@@ -33,8 +50,14 @@ func _input(event):
 	if event is InputEventMouseMotion:
 		delta_pitch -= event.relative.y * pitch_speed;
 		delta_yaw -= event.relative.x * yaw_speed;
-
+		
+func _process(delta):
+	if Input.is_action_just_pressed("pickup"):
+		pickup_ray.cast_to = camera.transform.basis * (Vector3.FORWARD * 50.0);
+		
 func _physics_process(delta):
+	
+		
 	var basis = transform.basis;
 	forward = -basis.z;
 	right = basis.x;
@@ -80,8 +103,8 @@ func _physics_process(delta):
 	
 	### the player itself should not pitch
 	### pitch is instead only applied to the camera
-	var a: Quat = Quat($camera.global_transform.basis);
-	var b: Quat = Quat($camera.global_transform.rotated(right.normalized(), rel_pitch).basis);
+	var a: Quat = Quat(camera.global_transform.basis);
+	var b: Quat = Quat(camera.global_transform.rotated(right.normalized(), rel_pitch).basis);
 	var c: Quat = a.slerp(b, 0.5);
 	$camera.global_transform.basis = Basis(c);
 
