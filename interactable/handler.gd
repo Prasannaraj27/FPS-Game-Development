@@ -26,7 +26,6 @@ func _process(_delta):
 			emit_signal("interaction", min_node);
 
 func create_object(handle, global_origin: Vector3, args: Array):
-	print("handle: " + str(handle));
 	var i = handle.instance();
 	i.connect("destructor", self, "dereference_node");
 	self.main.add_child(i);

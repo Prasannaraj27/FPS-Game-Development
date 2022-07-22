@@ -20,22 +20,23 @@ export var forward: Vector3 = Vector3();
 export var right: Vector3 = Vector3();
 export var up: Vector3 = Vector3();
 
-onready var camera: Camera = $camera;
-onready var pickup_ray: RayCast = $pickup_ray;
+const Item = preload("res://inventory/item.gd");
+
+onready var camera = $camera;
 onready var handler: Node = get_tree().get_root().get_node("main/handler");
 onready var inventory: Inventory = Inventory.new();
 
 func test(object):
 	if object is ItemObject:
-		self.inventory.add_items(object.item_kind, object.item_amount);
+		self.inventory.add_items(Item.new(object.item_kind), object.item_amount);
 		object.queue_free();
-		
+
 func _ready():
 	### set camera to follow player
 	self.camera.target = self;
 	
 	### register interaction signal
-	self.handler.connect("interaction", self, "test")
+	#self.handler.connect("interaction", self, "test")
 	
 	### debugging
 	### pickup_ray.debug_shape_custom_color = Color.red;
@@ -50,14 +51,21 @@ func _input(event):
 	if event is InputEventMouseMotion:
 		delta_pitch -= event.relative.y * pitch_speed;
 		delta_yaw -= event.relative.x * yaw_speed;
-		
+
 func _process(delta):
-	if Input.is_action_just_pressed("pickup"):
-		pickup_ray.cast_to = camera.transform.basis * (Vector3.FORWARD * 50.0);
-		
+	### just for testing purposes
+	#if Input.is_action_just_pressed("jump"):
+	#	inventory.visible = not inventory.visible;
+
+	if Input.is_mouse_button_pressed(1):
+		var bulletInstance = preload("res://BulletTest.tscn");
+		var newBullet = bulletInstance.instance();
+		add_child(newBullet);
+		print($camera.project_ray_origin(get_viewport().size / 2));
+		print($camera.project_ray_normal(get_viewport().size / 2));
+		newBullet.get_node("RayCast").direction = $camera.global_transform.basis;
+
 func _physics_process(delta):
-	
-		
 	var basis = transform.basis;
 	forward = -basis.z;
 	right = basis.x;
