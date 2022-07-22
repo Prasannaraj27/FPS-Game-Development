@@ -24,7 +24,7 @@ const Item = preload("res://inventory/item.gd");
 
 onready var camera = $camera;
 onready var handler: Node = get_tree().get_root().get_node("main/handler");
-onready var inventory: Inventory = Inventory.new();
+onready var inventory = $inventory;
 
 func test(object):
 	if object is ItemObject:
@@ -36,7 +36,7 @@ func _ready():
 	self.camera.target = self;
 	
 	### register interaction signal
-	#self.handler.connect("interaction", self, "test")
+	self.handler.connect("interaction", self, "test")
 	
 	### debugging
 	### pickup_ray.debug_shape_custom_color = Color.red;
@@ -54,16 +54,16 @@ func _input(event):
 
 func _process(delta):
 	### just for testing purposes
-	#if Input.is_action_just_pressed("jump"):
-	#	inventory.visible = not inventory.visible;
+	if Input.is_action_just_pressed("ui_cancel"):
+		inventory.visible = not inventory.visible;
 
 	if Input.is_mouse_button_pressed(1):
 		var bulletInstance = preload("res://BulletTest.tscn");
 		var newBullet = bulletInstance.instance();
 		add_child(newBullet);
-		print($camera.project_ray_origin(get_viewport().size / 2));
-		print($camera.project_ray_normal(get_viewport().size / 2));
-		newBullet.get_node("RayCast").direction = $camera.global_transform.basis;
+		print(camera.project_ray_origin(get_viewport().size / 2));
+		print(camera.project_ray_normal(get_viewport().size / 2));
+		newBullet.get_node("RayCast").direction = -camera.global_transform.basis.z;
 
 func _physics_process(delta):
 	var basis = transform.basis;
