@@ -20,6 +20,8 @@ export var forward: Vector3 = Vector3();
 export var right: Vector3 = Vector3();
 export var up: Vector3 = Vector3();
 
+export(NodePath) var camera;
+
 func _ready():
 	### set camera to follow player
 	$camera.target = self;
@@ -33,6 +35,15 @@ func _input(event):
 	if event is InputEventMouseMotion:
 		delta_pitch -= event.relative.y * pitch_speed;
 		delta_yaw -= event.relative.x * yaw_speed;
+
+func _process(delta):
+	if Input.is_mouse_button_pressed(1):
+		var bulletInstance = preload("res://BulletTest.tscn");
+		var newBullet = bulletInstance.instance();
+		add_child(newBullet);
+		print($camera.project_ray_origin(get_viewport().size / 2));
+		print($camera.project_ray_normal(get_viewport().size / 2));
+		newBullet.direction = ($camera.global_transform.basis).normalized();
 
 func _physics_process(delta):
 	var basis = transform.basis;
