@@ -11,7 +11,7 @@ var in_view: bool = false;
 
 func _ready():
 	self.connect("tree_exiting", self, "_destructor");
-	self.notifier.max_distance = 50.0;
+	self.notifier.max_distance = 5.0;
 	self.notifier.connect("camera_entered", self, "entered_view");
 	self.notifier.connect("camera_exited", self, "exited_view");
 
