@@ -1,32 +1,32 @@
 extends KinematicBody
 
 ### export all the variables for debugging
-export var velocity: Vector3 = Vector3.ZERO;
-export var speed: float = 10.0;
+export var velocity := Vector3();
+export var speed := 10.0;
 
-export var pitch: float = 0.0;
-export var yaw: float = 0.0;
-export var delta_pitch: float = 0.0;
-export var delta_yaw: float = 0.0;
-export var pitch_speed: float = 0.2;
-export var yaw_speed: float = 0.2;
+export var pitch := 0.0;
+export var yaw := 0.0;
+export var delta_pitch := 0.0;
+export var delta_yaw := 0.0;
+export var pitch_speed := 0.2;
+export var yaw_speed := 0.2;
 
 export onready var gravity: Vector3 = ProjectSettings.get_setting("physics/3d/default_gravity_vector") * ProjectSettings.get_setting("physics/3d/default_gravity");
-export var floor_drag: float = 0.6;
-export var air_drag: float = 0.9;
-export var jump_force: float = 20.0;
+export var floor_drag := 0.6;
+export var air_drag := 0.9;
+export var jump_force := 20.0;
 
-export var forward: Vector3 = Vector3();
-export var right: Vector3 = Vector3();
-export var up: Vector3 = Vector3();
+export var forward := Vector3();
+export var right := Vector3();
+export var up := Vector3();
 
 const Item = preload("res://inventory/item.gd");
 const Bullet = preload("res://prefabs/BulletTest.tscn");
 
-onready var camera = $camera;
-onready var handler: Node = get_tree().root.get_node("main/handler");
-onready var inventory = $inventory;
-onready var main = get_tree().root.get_node("main");
+onready var camera: Camera = $camera;
+onready var handler := get_tree().root.get_node("main/handler");
+onready var inventory := $inventory;
+onready var main := get_tree().root.get_node("main");
 
 func interact(object) -> void:
 	if object is ItemObject:
