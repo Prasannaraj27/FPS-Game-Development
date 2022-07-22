@@ -35,7 +35,6 @@ func _ready() -> void:
 	scroll.rect_size = scroll_size;
 	scroll.rect_min_size = scroll_size;
 	scroll.rect_position = scroll_padding / 2.0;
-	### scrollbar.step = full_size;
 	
 	grid.rect_size = grid_size;
 	grid.rect_min_size = grid_size;
@@ -43,7 +42,7 @@ func _ready() -> void:
 	grid.add_constant_override("hseparation", separation);
 	grid.add_constant_override("vseparation", separation);
 
-	self.build();
+	build();
 	
 func create_slot() -> void:
 	var item_frame = ItemFrame.instance();
@@ -53,12 +52,12 @@ func create_slot() -> void:
 	slots.append(item_frame);
 
 func build() -> void:
-	self.slots.empty();
-	self.num_slots = 0;
+	slots.empty();
+	num_slots = 0;
 	extend(DEFAULT_SLOTS);
 
 func extend(slots) -> void:
-	self.num_slots += slots;
+	num_slots += slots;
 	for _i in slots:
 		create_slot();
 
@@ -69,8 +68,8 @@ func add_items(item: Item, amount: int) -> int:
 		
 	### go over the already used slots to look for
 	### already existing stacks
-	for i in range(self.used_slots):
-		var slot = self.slots[i]
+	for i in range(used_slots):
+		var slot = slots[i]
 		### is the slot is not full and the item type is the same
 		### add as much items as possible to that slot
 		if (slot.item_kind == item.kind) and (not slot.is_full()):
@@ -82,7 +81,7 @@ func add_items(item: Item, amount: int) -> int:
 	### if there are still items to add
 	### then start consuming unused slots
 	while (amount != 0) and (used_slots < num_slots):
-		var slot = self.slots[used_slots];
+		var slot = slots[used_slots];
 		slot.assign(item);
 		amount = slot.add(amount);
 		used_slots += 1;

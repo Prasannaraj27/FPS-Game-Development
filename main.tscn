@@ -32,6 +32,20 @@ shape = SubResource( 2 )
 [node name="player" type="KinematicBody" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0 )
 script = ExtResource( 2 )
+velocity = null
+speed = null
+pitch = null
+yaw = null
+delta_pitch = null
+delta_yaw = null
+pitch_speed = null
+yaw_speed = null
+floor_drag = null
+air_drag = null
+jump_force = null
+forward = null
+right = null
+up = null
 
 [node name="MeshInstance" type="MeshInstance" parent="player"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )

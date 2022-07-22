@@ -27,33 +27,28 @@ onready var handler: Node = get_tree().root.get_node("main/handler");
 onready var inventory = $inventory;
 onready var main = get_tree().root.get_node("main");
 
-func test(object):
+func interact(object) -> void:
 	if object is ItemObject:
-		self.inventory.add_items(Item.new(object.item_kind), object.item_amount);
-		object.queue_free();
+		var overflow = inventory.add_items(object.item, object.item_amount);
+		if overflow > 0:
+			object.item_amount = overflow;
+		else:
+			object.queue_free();
 
-func _ready():
+func _ready() -> void:
 	### set camera to follow player
-	self.camera.target = self;
+	camera.target = self;
 	
 	### register interaction signal
-	self.handler.connect("interaction", self, "test")
-	
-	### debugging
-	### pickup_ray.debug_shape_custom_color = Color.red;
-	### pickup_ray.debug_shape_thickness = 1;
-
-	### random basis behavior tests
-	### Basis * vector rotates vector by the basis
-	### print((Basis(Vector3.UP, deg2rad(90.0)) * Vector3.FORWARD));
+	handler.connect("interaction", self, "interact")
 
 ### only way to capture mouse events
-func _input(event):
+func _input(event) -> void:
 	if event is InputEventMouseMotion:
 		delta_pitch -= event.relative.y * pitch_speed;
 		delta_yaw -= event.relative.x * yaw_speed;
 
-func _process(delta):
+func _process(delta) -> void:
 	### just for testing purposes
 	if Input.is_action_just_pressed("ui_cancel"):
 		inventory.visible = not inventory.visible;
@@ -63,11 +58,11 @@ func _process(delta):
 		var newBullet = bulletInstance.instance();
 		print(camera.project_ray_origin(get_viewport().size / 2));
 		print(camera.project_ray_normal(get_viewport().size / 2));
-		newBullet.global_transform.origin = self.global_transform.origin;
+		newBullet.global_transform.origin = global_transform.origin;
 		newBullet.get_node("RayCast").direction = -camera.global_transform.basis.z;
-		self.main.add_child(newBullet);
+		main.add_child(newBullet);
 
-func _physics_process(delta):
+func _physics_process(delta) -> void:
 	var basis = transform.basis;
 	forward = -basis.z;
 	right = basis.x;
@@ -116,7 +111,7 @@ func _physics_process(delta):
 	var a: Quat = Quat(camera.global_transform.basis);
 	var b: Quat = Quat(camera.global_transform.rotated(right.normalized(), rel_pitch).basis);
 	var c: Quat = a.slerp(b, 0.5);
-	$camera.global_transform.basis = Basis(c);
+	camera.global_transform.basis = Basis(c);
 
 	### yaw player and camera
 	global_rotate(up.normalized(), rel_yaw);

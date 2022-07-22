@@ -5,15 +5,15 @@ class_name ItemObject
 const Item = preload("res://inventory/item.gd");
 const ItemKind = preload("res://inventory/item_kind.gd");
 
-var item_amount := 50;
-var item_kind: int = -1;
+var item_amount := 0 setget set_item_amount, get_item_amount;
+var item: Item = null;
 
-func init(item_amount: int, item_kind: int):
-	self.item_amount = item_amount;
-	self.item_kind = item_kind;
+func init(amount: int, i: Item) -> Interactable:
+	item_amount = amount;
+	item = i;
 	
 	var color: Color = Color.blueviolet;
-	match item_kind:
+	match item.kind:
 		ItemKind.Metal:
 			color = Color.gray;
 		ItemKind.Wood:
@@ -27,7 +27,16 @@ func init(item_amount: int, item_kind: int):
 			
 	var mat := SpatialMaterial.new();
 	mat.albedo_color = color;
-	$mesh.material_override = mat;
+	mesh.material_override = mat;
 
-func create_tooltip():
-	return str(self.item_amount) + "x " + Item.name_from(self.item_kind);
+	return self
+
+func create_tooltip() -> String:
+	return str(item_amount) + "x " + item._name;
+
+func get_item_amount() -> int:
+	return item_amount;
+
+func set_item_amount(amount: int) -> void:
+	item_amount = amount;
+	tooltip.text = create_tooltip();

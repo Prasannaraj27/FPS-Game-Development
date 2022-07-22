@@ -28,24 +28,12 @@ _global_script_classes=[ {
 "class": "ItemObject",
 "language": "GDScript",
 "path": "res://interactable/item_object.gd"
-}, {
-"base": "Reference",
-"class": "Queue",
-"language": "GDScript",
-"path": "res://queue/queue.gd"
-}, {
-"base": "Reference",
-"class": "QueueEntry",
-"language": "GDScript",
-"path": "res://queue/queue_entry.gd"
 } ]
 _global_script_class_icons={
 "Interactable": "res://icon.png",
 "Inventory": "",
 "Item": "",
-"ItemObject": "",
-"Queue": "",
-"QueueEntry": ""
+"ItemObject": ""
 }
 
 [application]

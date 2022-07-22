@@ -8,25 +8,25 @@ var kind: int = ItemKind.Unknown;
 var description := String();
 var _name := String();
 
-func _init(kind: int):
-	self.kind = kind;
-	self.description = description_from(kind);
-	self._name = name_from(kind);
+func _init(k: int):
+	kind = k;
+	description = description_from(k);
+	_name = name_from(k);
 
 func equals(other: Item) -> bool:
-	return self.kind == other.kind;
+	return kind == other.kind;
 	
 func path() -> String:
-	return "res://assets/" + self._name + ".png";
+	return "res://assets/" + _name + ".png";
 
 func image() -> Texture:
 	var texture = ImageTexture.new();
 	var img = Image.new();
-	img.load(self.path());
+	img.load(path());
 	texture.create_from_image(img);
 	return texture;
 
-static func description_from(kind: int):
+static func description_from(kind: int) -> String:
 	match kind:
 		ItemKind.Metal:
 			return "this is metal.";
@@ -39,7 +39,7 @@ static func description_from(kind: int):
 		_:
 			return "[unknown]";
 			
-static func name_from(kind: int):
+static func name_from(kind: int) -> String:
 	match kind:
 		ItemKind.Metal:
 			return "metal";
